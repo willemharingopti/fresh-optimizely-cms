@@ -8,25 +8,10 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
       id-token: write
     steps:
       - uses: actions/checkout@v6
-
-      - name: Bump patch version
-        run: |
-          CURRENT=$(jq -r '.version' deno.json)
-          NEW=$(echo "$CURRENT" | awk -F. -v OFS=. '{$3+=1; print}')
-          sed -i "s/\"version\": \"$CURRENT\"/\"version\": \"$NEW\"/" deno.json
-          echo "Bumped version: $CURRENT -> $NEW"
-
-      - name: Commit version bump
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add deno.json
-          git commit -m "chore: bump version [skip ci]"
-          git push
 
       - name: Publish package
         run: npx jsr publish

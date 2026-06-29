@@ -1,7 +1,8 @@
 {
   "nodeModulesDir": "auto",
   "tasks": {
-    
+    "bump": "deno run --allow-read --allow-write scripts/bump-version.ts",
+    "hooks:install": "git config core.hooksPath .githooks"
   },
   "lint": {
     "rules": {
@@ -51,7 +52,7 @@
   },
   "name": "@willemharingopti/fresh-optimizely-cms",
   "exports": "./mod.ts",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
   
 }

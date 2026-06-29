@@ -1,0 +1,12 @@
+#!/bin/sh
+# Bump the patch version in deno.json before each commit and include it in the commit.
+
+# Avoid recursive bumping during rebase/merge/amend.
+if [ -n "$GIT_REFLOG_ACTION" ]; then
+  case "$GIT_REFLOG_ACTION" in
+    rebase*|merge*|amend*|cherry-pick*) exit 0 ;;
+  esac
+fi
+
+deno run --allow-read --allow-write scripts/bump-version.ts || exit 1
+git add deno.json
