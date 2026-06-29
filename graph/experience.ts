@@ -14,7 +14,6 @@
  * shared CMS instance (an unscoped "/" matches every site's home).
  */
 import { client } from "./client.ts"
-import { SITE_KEYS } from "./siteKeys.ts"
 import type { Settings } from "../render/displaySettings.ts"
 
 // --- shaped types ---------------------------------------------------------
@@ -196,14 +195,6 @@ async function safe<T>(fn: () => Promise<T>): Promise<T | null> {
   }
 }
 
-/** The blog's child pages (the articles), filtered to the expected URL prefix. */
-async function blogChildren(urlPrefix: string): Promise<ChildLink[]> {
-  const items = await safe(() => client().getItems({ key: SITE_KEYS.blog })) as
-    | ChildLink[]
-    | null
-  return (items ?? []).filter((c) => (c?._metadata?.url?.default ?? "").startsWith(urlPrefix))
-}
-
 async function loadArticleByKey(key: string): Promise<Article | null> {
   const item = await safe(() => client().getContent({ key }))
   return item ? toArticle(item as RawArticle) : null
@@ -223,20 +214,13 @@ export async function loadExperience(
   }
 }
 
+/**
+ * Articles that are children of the given content, by its key — e.g. the
+ * resolved (or previewed) Blog experience. The article list renders the children
+ * of the page it lives on, so the parent key comes from the content being
+ * rendered rather than any site-specific identifier.
+ */
 export async function loadArticles(
-  urlPrefix: string,
-  signal?: AbortSignal,
-): Promise<ArticleSummary[]> {
-  if (signal?.aborted) return []
-  const children = await blogChildren(urlPrefix)
-  const articles = await Promise.all(
-    children.map((c) => loadArticleByKey(c._metadata!.key)),
-  )
-  return articles.filter((a): a is Article => a != null)
-}
-
-/** Child articles of a parent (the resolved Blog experience), by its key. */
-async function childArticles(
   parentKey: string,
   signal?: AbortSignal,
 ): Promise<ArticleSummary[]> {
@@ -286,7 +270,7 @@ export async function loadPage(
   const types: string[] = item._metadata?.types ?? []
   if (types.includes("_Experience")) {
     const sections = parseComposition(item.composition)
-    const articles = hasArticleList(sections) ? await childArticles(item._metadata?.key, signal) : []
+    const articles = hasArticleList(sections) && item._metadata?.key ? await loadArticles(item._metadata.key, signal) : []
     return {
       kind: "experience",
       displayName: item._metadata?.displayName ?? "",

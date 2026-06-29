@@ -6,7 +6,6 @@ import { createDefine, page } from "fresh"
 // which keeps this plugin free of any imports from the app.
 const define = createDefine<Record<string, unknown>>()
 import { type Article, type ArticleSummary, loadArticlePreview, loadArticles, loadExperiencePreview, type Section } from "../graph/experience.ts"
-import { BLOG_URL_PREFIX } from "../graph/siteKeys.ts"
 import { cmsBaseUrl, env } from "../env.ts"
 import { Composition } from "../render/Composition.tsx"
 import { ArticleView } from "../render/ArticleView.tsx"
@@ -62,10 +61,10 @@ export const handler = define.handlers({
       ctx.req.signal,
     )
     if (exp && exp.sections.length) {
-      const articles = await loadArticles(BLOG_URL_PREFIX, ctx.req.signal)
-        .catch(
-          () => [],
-        )
+      // Mirror published rendering: an experience's article list shows the
+      // children of the page being previewed (resolved from `key`), not any
+      // site-specific identifier.
+      const articles = await loadArticles(key, ctx.req.signal).catch(() => [])
       return page<Data>({
         kind: "experience",
         sections: exp.sections,
