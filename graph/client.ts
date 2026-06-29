@@ -12,11 +12,11 @@
  * `graphQuery()` remains for the lightweight `graph:ping` connectivity probe,
  * which runs a raw GraphQL document rather than a content query.
  */
-import { config, getClient, type GraphClient } from "@optimizely/cms-sdk";
-import "./contentTypes.ts"; // registers content types as a side effect
-import { env, graphContentUrl, isGraphConfigured } from "../env.ts";
+import { config, getClient, type GraphClient } from "@optimizely/cms-sdk"
+import "./contentTypes.ts" // registers content types as a side effect
+import { env, graphContentUrl, isGraphConfigured } from "../env.ts"
 
-let configured = false;
+let configured = false
 function ensureConfigured() {
   if (!configured) {
     config({
@@ -25,22 +25,22 @@ function ensureConfigured() {
       // Disable Optimizely Graph's server-side query cache in dev so freshly
       // published edits show on reload; keep it on in production.
       cache: !env.devMode,
-    });
-    configured = true;
+    })
+    configured = true
   }
 }
 
 /** The shared, lazily-configured Optimizely Graph client. */
 export function client(): GraphClient {
-  ensureConfigured();
-  return getClient();
+  ensureConfigured()
+  return getClient()
 }
 
 export interface GraphResult<T> {
-  data: T | null;
-  errors?: { message: string }[];
+  data: T | null
+  errors?: { message: string }[]
   /** The query text, for the dev debug panel. */
-  query: string;
+  query: string
 }
 
 /**
@@ -58,16 +58,16 @@ export async function graphQuery<T>(
       data: null,
       errors: [{ message: "OPTIMIZELY_GRAPH_SINGLE_KEY is not configured." }],
       query,
-    };
+    }
   }
   try {
-    const data = await client().request(query, variables) as T;
-    return { data: data ?? null, query };
+    const data = await client().request(query, variables) as T
+    return { data: data ?? null, query }
   } catch (err) {
     return {
       data: null,
       errors: [{ message: `Graph request failed: ${(err as Error).message}` }],
       query,
-    };
+    }
   }
 }

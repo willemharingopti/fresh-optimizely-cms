@@ -48,9 +48,10 @@
     "types": ["vite/client"]
   },
   "name": "@willemharingopti/fresh-optimizely-cms",
-  "exports": "./mod.ts",
-  "version": "1.0.1",
+  "exports": {
+    ".": "./mod.ts",
+    "./preview/PreviewListener.tsx": "./preview/PreviewListener.tsx"
+  },
+  "version": "1.0.2",
   "license": "MIT"
-  
 }
-

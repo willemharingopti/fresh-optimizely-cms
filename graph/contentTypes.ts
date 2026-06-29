@@ -13,17 +13,13 @@
  * Registration is idempotent and happens as a side effect of importing this
  * module (see `initContentTypeRegistry` below); import it once from the loaders.
  */
-import {
-  BlankExperienceContentType,
-  contentType,
-  initContentTypeRegistry,
-} from "@optimizely/cms-sdk";
+import { BlankExperienceContentType, contentType, initContentTypeRegistry } from "@optimizely/cms-sdk"
 
 /** A link list, as used by Hero / Card / CallToAction. */
 const links = {
   type: "array",
   items: { type: "link" },
-} as const;
+} as const
 
 export const HeroContentType = contentType({
   key: "Hero",
@@ -37,7 +33,7 @@ export const HeroContentType = contentType({
     Image: { type: "contentReference" },
     Links: links,
   },
-});
+})
 
 export const CardContentType = contentType({
   key: "Card",
@@ -51,7 +47,7 @@ export const CardContentType = contentType({
     Asset: { type: "contentReference" },
     Links: links,
   },
-});
+})
 
 export const CollapseContentType = contentType({
   key: "Collapse",
@@ -62,7 +58,7 @@ export const CollapseContentType = contentType({
     Heading: { type: "string" },
     Body: { type: "richText" },
   },
-});
+})
 
 export const CallToActionContentType = contentType({
   key: "CallToAction",
@@ -72,7 +68,7 @@ export const CallToActionContentType = contentType({
   properties: {
     Links: links,
   },
-});
+})
 
 export const ParagraphContentType = contentType({
   key: "Paragraph",
@@ -82,7 +78,7 @@ export const ParagraphContentType = contentType({
   properties: {
     Text: { type: "richText" },
   },
-});
+})
 
 export const TextContentType = contentType({
   key: "Text",
@@ -92,7 +88,7 @@ export const TextContentType = contentType({
   properties: {
     Content: { type: "string" },
   },
-});
+})
 
 export const ImageContentType = contentType({
   key: "Image",
@@ -103,7 +99,7 @@ export const ImageContentType = contentType({
     AltText: { type: "string" },
     Image: { type: "contentReference" },
   },
-});
+})
 
 export const ArticleListContentType = contentType({
   key: "ArticleList",
@@ -114,7 +110,7 @@ export const ArticleListContentType = contentType({
     Title: { type: "string" },
     NumberOfArticles: { type: "integer" },
   },
-});
+})
 
 export const ArticlePageContentType = contentType({
   key: "ArticlePage",
@@ -128,7 +124,7 @@ export const ArticlePageContentType = contentType({
     Body: { type: "richText" },
     PromoImage: { type: "contentReference" },
   },
-});
+})
 
 /** Every content type the site renders, registered once for query generation. */
 export const CONTENT_TYPES = [
@@ -142,6 +138,6 @@ export const CONTENT_TYPES = [
   ImageContentType,
   ArticleListContentType,
   ArticlePageContentType,
-];
+]
 
-initContentTypeRegistry(CONTENT_TYPES);
+initContentTypeRegistry(CONTENT_TYPES)

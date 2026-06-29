@@ -1,17 +1,7 @@
-import type { JSX } from "preact";
-import type {
-  ArticleSummary,
-  CmsComponent,
-  CmsLink,
-  Section,
-} from "../graph/experience.ts";
-import {
-  columnStyle,
-  rowStyle,
-  sectionContainerStyle,
-  sectionOuterStyle,
-} from "./displaySettings.ts";
-import { Icon } from "./Icon.tsx";
+import type { JSX } from "preact"
+import type { ArticleSummary, CmsComponent, CmsLink, Section } from "../graph/experience.ts"
+import { columnStyle, rowStyle, sectionContainerStyle, sectionOuterStyle } from "./displaySettings.ts"
+import { Icon } from "./Icon.tsx"
 
 const FEATURE_ICONS = [
   "science",
@@ -22,15 +12,15 @@ const FEATURE_ICONS = [
   "handshake",
   "insights",
   "rocket_launch",
-];
+]
 
 function links(list?: (CmsLink | null)[] | null) {
-  return (list ?? []).filter((l): l is CmsLink => l != null);
+  return (list ?? []).filter((l): l is CmsLink => l != null)
 }
 
 /** Resolve a CMS asset reference to its absolute URL (empty string if unset). */
 function imgUrl(ref?: { url?: { default?: string | null } | null } | null) {
-  return ref?.url?.default ?? "";
+  return ref?.url?.default ?? ""
 }
 
 // --- per-type blocks ------------------------------------------------------
@@ -39,7 +29,7 @@ function imgUrl(ref?: { url?: { default?: string | null } | null } | null) {
 // emit no per-property `data-epi-edit` markers — that pattern is reserved for
 // page templates (see ArticleView), matching the reference Astro implementation.
 function HeroBlock({ c }: { c: CmsComponent }) {
-  const [primary, secondary] = links(c.Links);
+  const [primary, secondary] = links(c.Links)
   return (
     <div style="width:100%; display:grid; grid-template-columns:1.05fr 0.95fr; gap:60px; align-items:center;">
       <div style="display:flex; flex-direction:column; gap:22px;">
@@ -82,11 +72,11 @@ function HeroBlock({ c }: { c: CmsComponent }) {
           </div>
         )}
     </div>
-  );
+  )
 }
 
 function FeatureCard({ c, icon }: { c: CmsComponent; icon: string }) {
-  const [link] = links(c.Links);
+  const [link] = links(c.Links)
   return (
     <article
       class="card"
@@ -117,7 +107,7 @@ function FeatureCard({ c, icon }: { c: CmsComponent; icon: string }) {
         </a>
       )}
     </article>
-  );
+  )
 }
 
 function StatBlock({ c, dark }: { c: CmsComponent; dark: boolean }) {
@@ -135,16 +125,14 @@ function StatBlock({ c, dark }: { c: CmsComponent; dark: boolean }) {
         </p>
       )}
     </div>
-  );
+  )
 }
 
 function CardBlock(
   { c, index, dark }: { c: CmsComponent; index: number; dark: boolean },
 ) {
   // Feature cards carry Body; stat cards are Heading + SubHeading only.
-  return c.Body?.html
-    ? <FeatureCard c={c} icon={FEATURE_ICONS[index % FEATURE_ICONS.length]} />
-    : <StatBlock c={c} dark={dark} />;
+  return c.Body?.html ? <FeatureCard c={c} icon={FEATURE_ICONS[index % FEATURE_ICONS.length]} /> : <StatBlock c={c} dark={dark} />
 }
 
 function CollapseBlock({ c }: { c: CmsComponent }) {
@@ -170,12 +158,12 @@ function CollapseBlock({ c }: { c: CmsComponent }) {
         />
       )}
     </details>
-  );
+  )
 }
 
 function CtaBlock({ c }: { c: CmsComponent }) {
-  const list = links(c.Links);
-  if (!list.length) return null;
+  const list = links(c.Links)
+  if (!list.length) return null
   return (
     <div style="display:flex; gap:14px; flex-wrap:wrap; margin-top:8px;">
       {list.map((l, i) => (
@@ -189,7 +177,7 @@ function CtaBlock({ c }: { c: CmsComponent }) {
         </a>
       ))}
     </div>
-  );
+  )
 }
 
 function TextBlock({ c, dark }: { c: CmsComponent; dark: boolean }) {
@@ -197,24 +185,22 @@ function TextBlock({ c, dark }: { c: CmsComponent; dark: boolean }) {
     <h2 class="disp" style={`font-size:40px;${dark ? "color:#fff;" : ""}`}>
       {c.Content}
     </h2>
-  );
+  )
 }
 
 function ParagraphBlock({ c, dark }: { c: CmsComponent; dark: boolean }) {
-  if (!c.Text?.html) return null;
+  if (!c.Text?.html) return null
   return (
     <div
       class="bdy cms-prose"
-      style={dark
-        ? "color:rgba(244,251,238,.82); font-size:19px;"
-        : "color:var(--t-muted); font-size:19px;"}
+      style={dark ? "color:rgba(244,251,238,.82); font-size:19px;" : "color:var(--t-muted); font-size:19px;"}
       dangerouslySetInnerHTML={{ __html: c.Text.html }}
     />
-  );
+  )
 }
 
 function ImageBlock({ c }: { c: CmsComponent }) {
-  const url = imgUrl(c.Image);
+  const url = imgUrl(c.Image)
   if (url) {
     return (
       <img
@@ -222,13 +208,13 @@ function ImageBlock({ c }: { c: CmsComponent }) {
         alt={c.AltText ?? ""}
         style="width:100%; height:auto; border-radius:14px; display:block;"
       />
-    );
+    )
   }
   return (
     <div class="ph" style="aspect-ratio:5/4; width:100%;">
       <Icon name="image" size={40} />
     </div>
-  );
+  )
 }
 
 function ArticleListBlock(
@@ -271,53 +257,53 @@ function ArticleListBlock(
         ))}
       </div>
     </div>
-  );
+  )
 }
 
 // --- component dispatch ---------------------------------------------------
 function Block(
   { c, index, dark, articles }: {
-    c: CmsComponent;
-    index: number;
-    dark: boolean;
-    articles: ArticleSummary[];
+    c: CmsComponent
+    index: number
+    dark: boolean
+    articles: ArticleSummary[]
   },
 ) {
   switch (c.__typename) {
     case "Hero":
-      return <HeroBlock c={c} />;
+      return <HeroBlock c={c} />
     case "Card":
-      return <CardBlock c={c} index={index} dark={dark} />;
+      return <CardBlock c={c} index={index} dark={dark} />
     case "Collapse":
-      return <CollapseBlock c={c} />;
+      return <CollapseBlock c={c} />
     case "CallToAction":
-      return <CtaBlock c={c} />;
+      return <CtaBlock c={c} />
     case "Text":
-      return <TextBlock c={c} dark={dark} />;
+      return <TextBlock c={c} dark={dark} />
     case "Paragraph":
-      return <ParagraphBlock c={c} dark={dark} />;
+      return <ParagraphBlock c={c} dark={dark} />
     case "Image":
-      return <ImageBlock c={c} />;
+      return <ImageBlock c={c} />
     case "ArticleList":
-      return <ArticleListBlock c={c} articles={articles} />;
+      return <ArticleListBlock c={c} articles={articles} />
     default:
-      return null;
+      return null
   }
 }
 
 // --- section + experience -------------------------------------------------
 function SectionView(
   { section, articles, edit }: {
-    section: Section;
-    articles: ArticleSummary[];
-    edit: boolean;
+    section: Section
+    articles: ArticleSummary[]
+    edit: boolean
   },
 ) {
   // Section: full-bleed background + text color + vertical spacing (vSpacing);
   // inner container width comes from gridWidth. Rows/columns lay out via flex
   // from their own display settings (gap, justify, align, gridSpan, ...).
-  const { style, dark } = sectionOuterStyle(section.settings);
-  let cardIndex = 0;
+  const { style, dark } = sectionOuterStyle(section.settings)
+  let cardIndex = 0
   return (
     // In edit mode, tag the section and each component with their composition
     // node keys so the Visual Builder editor can map DOM elements to nodes.
@@ -328,17 +314,15 @@ function SectionView(
             {row.columns.map((col, ci) => (
               <div key={ci} style={columnStyle(col.settings)}>
                 {col.components.map((c, idx2) => {
-                  const idx = c.__typename === "Card" ? cardIndex++ : 0;
-                  const block = (
-                    <Block c={c} index={idx} dark={dark} articles={articles} />
-                  );
+                  const idx = c.__typename === "Card" ? cardIndex++ : 0
+                  const block = <Block c={c} index={idx} dark={dark} articles={articles} />
                   return edit
                     ? (
                       <div key={idx2} data-epi-block-id={c.__nodeKey}>
                         {block}
                       </div>
                     )
-                    : <div key={idx2} style="display:contents;">{block}</div>;
+                    : <div key={idx2} style="display:contents;">{block}</div>
                 })}
               </div>
             ))}
@@ -346,22 +330,20 @@ function SectionView(
         ))}
       </div>
     </section>
-  );
+  )
 }
 
 export function Composition(
   { sections, articles = [], edit = false }: {
-    sections: Section[];
-    articles?: ArticleSummary[];
+    sections: Section[]
+    articles?: ArticleSummary[]
     /** Preview/edit mode: emit Visual Builder block ids for on-page editing. */
-    edit?: boolean;
+    edit?: boolean
   },
-): JSX.Element  {
+): JSX.Element {
   return (
     <>
-      {sections.map((s, i) => (
-        <SectionView key={i} section={s} articles={articles} edit={edit} />
-      ))}
+      {sections.map((s, i) => <SectionView key={i} section={s} articles={articles} edit={edit} />)}
     </>
-  );
+  )
 }

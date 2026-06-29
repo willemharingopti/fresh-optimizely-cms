@@ -1,4 +1,4 @@
-import { useEffect } from "preact/hooks";
+import { useEffect } from "preact/hooks"
 
 /**
  * Live-preview bridge for the Optimizely CMS editor.
@@ -13,7 +13,7 @@ import { useEffect } from "preact/hooks";
  * This is an island (client-side only); it renders nothing.
  */
 interface ContentSavedDetail {
-  previewUrl?: string;
+  previewUrl?: string
 }
 
 /**
@@ -23,20 +23,19 @@ interface ContentSavedDetail {
 export default function PreviewListener({ delayMs = 0 }: { delayMs?: number }) {
   useEffect(() => {
     const onSaved = (event: Event) => {
-      const detail = (event as CustomEvent<ContentSavedDetail>).detail;
-      const next = detail?.previewUrl;
+      const detail = (event as CustomEvent<ContentSavedDetail>).detail
+      const next = detail?.previewUrl
       setTimeout(() => {
         if (next) {
-          globalThis.location.replace(next);
+          globalThis.location.replace(next)
         } else {
-          globalThis.location.reload();
+          globalThis.location.reload()
         }
-      }, delayMs);
-    };
-    globalThis.addEventListener("optimizely:cms:contentSaved", onSaved);
-    return () =>
-      globalThis.removeEventListener("optimizely:cms:contentSaved", onSaved);
-  }, [delayMs]);
+      }, delayMs)
+    }
+    globalThis.addEventListener("optimizely:cms:contentSaved", onSaved)
+    return () => globalThis.removeEventListener("optimizely:cms:contentSaved", onSaved)
+  }, [delayMs])
 
-  return null;
+  return null
 }

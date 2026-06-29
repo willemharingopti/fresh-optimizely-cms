@@ -5,16 +5,16 @@
  */
 
 function read(name: string): string | undefined {
-  const v = Deno.env.get(name);
-  return v && v.trim().length > 0 ? v.trim() : undefined;
+  const v = Deno.env.get(name)
+  return v && v.trim().length > 0 ? v.trim() : undefined
 }
 
 export interface iEnv {
-  cmsUrl?: string,
-  graphGateway: string,
-  graphSingleKey?: string,
-  graphAppKey?: string,
-  graphSecret?: string,
+  cmsUrl?: string
+  graphGateway: string
+  graphSingleKey?: string
+  graphAppKey?: string
+  graphSecret?: string
   devMode: boolean
   /** ms to wait after a CMS save before re-fetching preview (Graph re-index lag). */
   previewDelay: number
@@ -29,11 +29,11 @@ export const env: iEnv = {
   devMode: read("OPTIMIZELY_DEV_MODE") === "true",
   /** ms to wait after a CMS save before re-fetching preview (Graph re-index lag). */
   previewDelay: Number(read("OPTIMIZELY_PREVIEW_DELAY") ?? "0") || 0,
-};
+}
 
 /** True when we have enough config to talk to Optimizely Graph for published content. */
 export function isGraphConfigured(): boolean {
-  return Boolean(env.graphSingleKey);
+  return Boolean(env.graphSingleKey)
 }
 
 /**
@@ -43,16 +43,16 @@ export function isGraphConfigured(): boolean {
  * the query string. Used for both published and preview requests.
  */
 export function graphContentUrl(): string {
-  const base = env.graphGateway.replace(/\/+$/, "");
-  return `${base}/content/v2`;
+  const base = env.graphGateway.replace(/\/+$/, "")
+  return `${base}/content/v2`
 }
 
 /** Published endpoint with the single key inlined — for the graph:ping probe display. */
 export function graphEndpoint(): string {
-  return `${graphContentUrl()}?auth=${env.graphSingleKey ?? ""}`;
+  return `${graphContentUrl()}?auth=${env.graphSingleKey ?? ""}`
 }
 
 /** Base URL of the CMS instance (trailing slash trimmed), for editor scripts. */
 export function cmsBaseUrl(): string | undefined {
-  return env.cmsUrl?.replace(/\/+$/, "");
+  return env.cmsUrl?.replace(/\/+$/, "")
 }

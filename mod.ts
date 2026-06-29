@@ -12,15 +12,15 @@
  * The data loaders, renderers, content keys, and types are re-exported here for
  * the app's own page routes to import.
  */
-import type { App } from "fresh";
-import { createPreviewRoute, type PreviewLayout } from "./preview/route.tsx";
+import type { App } from "fresh"
+import { createPreviewRoute, type PreviewLayout } from "./preview/route.tsx"
 
 export interface OptimizelyCmsOptions {
   /**
    * Layout wrapper for the preview page — e.g. the host app's `<Page>` chrome.
    * Injecting it keeps this plugin free of any imports from the app.
    */
-  layout: PreviewLayout;
+  layout: PreviewLayout
 }
 
 /** Register the Optimizely CMS routes (currently: Visual Builder preview). */
@@ -33,23 +33,17 @@ export function optimizelyCmsPlugin<S>(
   app.route(
     "/preview",
     createPreviewRoute(options.layout) as Parameters<typeof app.route>[1],
-  );
-  return app;
+  )
+  return app
 }
 
 // --- library surface for app routes ---------------------------------------
-export { loadArticles, loadExperience, loadPage } from "./graph/experience.ts";
-export type {
-  Article,
-  ArticleSummary,
-  Experience,
-  PageContent,
-  Section,
-} from "./graph/experience.ts";
-export { Composition } from "./render/Composition.tsx";
-export { ArticleView } from "./render/ArticleView.tsx";
-export { graphQuery } from "./graph/client.ts";
-export { BLOG_URL_PREFIX, SITE_KEYS } from "./graph/siteKeys.ts";
+export { loadArticles, loadExperience, loadPage } from "./graph/experience.ts"
+export type { Article, ArticleSummary, Experience, PageContent, Section } from "./graph/experience.ts"
+export { Composition } from "./render/Composition.tsx"
+export { ArticleView } from "./render/ArticleView.tsx"
+export { graphQuery } from "./graph/client.ts"
+export { BLOG_URL_PREFIX, SITE_KEYS } from "./graph/siteKeys.ts"
 
 export { PING_QUERY } from "./graph/queries.ts"
 export { env, graphEndpoint, isGraphConfigured } from "./env.ts"

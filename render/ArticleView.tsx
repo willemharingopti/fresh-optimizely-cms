@@ -1,12 +1,10 @@
-import type { JSX } from "preact";
-import type { Article } from "../graph/experience.ts";
-import { Icon } from "./Icon.tsx";
+import type { JSX } from "preact"
+import type { Article } from "../graph/experience.ts"
+import { Icon } from "./Icon.tsx"
 
 function initials(name: string): string {
-  return name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) =>
-    w[0]?.toUpperCase()
-  )
-    .join("");
+  return name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]?.toUpperCase())
+    .join("")
 }
 
 /**
@@ -18,7 +16,7 @@ function initials(name: string): string {
  * Keys match the ArticlePage content type: Heading / SubHeading / Author / Body.
  */
 export function ArticleView({ article: a, edit = false }: { article: Article; edit?: boolean }): JSX.Element {
-  const ep = (name: string) => (edit ? name : undefined);
+  const ep = (name: string) => (edit ? name : undefined)
   return (
     <article>
       <div
@@ -35,9 +33,7 @@ export function ArticleView({ article: a, edit = false }: { article: Article; ed
         <h1 class="disp" style="font-size:46px;" data-epi-edit={ep("Heading")}>
           {a.heading}
         </h1>
-        {a.subHeading && (
-          <p class="lead" data-epi-edit={ep("SubHeading")}>{a.subHeading}</p>
-        )}
+        {a.subHeading && <p class="lead" data-epi-edit={ep("SubHeading")}>{a.subHeading}</p>}
         {a.author && (
           <div
             style="display:flex; align-items:center; gap:12px; padding:8px 0 4px;"
@@ -81,5 +77,5 @@ export function ArticleView({ article: a, edit = false }: { article: Article; ed
         dangerouslySetInnerHTML={{ __html: a.bodyHtml }}
       />
     </article>
-  );
+  )
 }

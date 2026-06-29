@@ -5,4 +5,4 @@
  */
 export const PING_QUERY: string = /* GraphQL */ `
 query Ping { __schema { queryType { name } } }
-`;
+`
