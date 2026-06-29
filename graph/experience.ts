@@ -32,6 +32,12 @@ export interface CmsComponent {
   __typename: string
   /** Composition node key — used as the on-page-edit block id in preview. */
   __nodeKey?: string
+  /**
+   * Display-template key applied to this component's node, if any (e.g.
+   * `axiom-hero-spotlight`). Standard/Default templates leave the block
+   * rendering unchanged; `axiom-` keys select a variant (see Composition.tsx).
+   */
+  __template?: string
   Heading?: string | null
   SubHeading?: string | null
   Body?: { html?: string | null } | null
@@ -149,7 +155,11 @@ function parseComposition(comp: RawNode | null | undefined): Section[] {
       for (const colNode of childNodes(rowNode)) {
         const components = childNodes(colNode)
           .filter((n) => n.component?.__typename)
-          .map((n) => ({ ...n.component!, __nodeKey: n.key ?? undefined }))
+          .map((n) => ({
+            ...n.component!,
+            __nodeKey: n.key ?? undefined,
+            __template: n.displayTemplateKey ?? undefined,
+          }))
         if (components.length) {
           columns.push({ ...nodeStyle(colNode), components })
         }

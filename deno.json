@@ -52,6 +52,6 @@
     ".": "./mod.ts",
     "./preview/PreviewListener.tsx": "./preview/PreviewListener.tsx"
   },
-  "version": "1.0.4",
+  "version": "1.0.5",
   "license": "MIT"
 }
