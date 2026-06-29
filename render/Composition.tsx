@@ -1,3 +1,4 @@
+import type { JSX } from "preact";
 import type {
   ArticleSummary,
   CmsComponent,
@@ -355,7 +356,7 @@ export function Composition(
     /** Preview/edit mode: emit Visual Builder block ids for on-page editing. */
     edit?: boolean;
   },
-) {
+): JSX.Element  {
   return (
     <>
       {sections.map((s, i) => (

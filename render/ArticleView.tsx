@@ -1,3 +1,4 @@
+import type { JSX } from "preact";
 import type { Article } from "../graph/experience.ts";
 import { Icon } from "./Icon.tsx";
 
@@ -16,9 +17,7 @@ function initials(name: string): string {
  * Visual Builder composition uses block-level ids instead; see Composition.tsx).
  * Keys match the ArticlePage content type: Heading / SubHeading / Author / Body.
  */
-export function ArticleView(
-  { article: a, edit = false }: { article: Article; edit?: boolean },
-) {
+export function ArticleView({ article: a, edit = false }: { article: Article; edit?: boolean }): JSX.Element {
   const ep = (name: string) => (edit ? name : undefined);
   return (
     <article>
