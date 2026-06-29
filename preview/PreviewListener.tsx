@@ -20,7 +20,7 @@ interface ContentSavedDetail {
  * @param delayMs Wait before re-navigating, to give Optimizely Graph time to
  *   re-index the just-saved content (matches the reference's PREVIEW_DELAY).
  */
-export default function PreviewListener({ delayMs = 0 }: { delayMs?: number }) {
+export default function PreviewListener({ delayMs = 0 }: { delayMs?: number }): null {
   useEffect(() => {
     const onSaved = (event: Event) => {
       const detail = (event as CustomEvent<ContentSavedDetail>).detail
