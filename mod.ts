@@ -50,3 +50,6 @@ export { Composition } from "./render/Composition.tsx";
 export { ArticleView } from "./render/ArticleView.tsx";
 export { graphQuery } from "./graph/client.ts";
 export { BLOG_URL_PREFIX, SITE_KEYS } from "./graph/siteKeys.ts";
+
+export { PING_QUERY } from "./graph/queries.ts"
+export { env, graphEndpoint, isGraphConfigured } from "./env.ts"
