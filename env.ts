@@ -9,7 +9,18 @@ function read(name: string): string | undefined {
   return v && v.trim().length > 0 ? v.trim() : undefined;
 }
 
-export const env = {
+export interface iEnv {
+  cmsUrl?: string,
+  graphGateway: string,
+  graphSingleKey?: string,
+  graphAppKey?: string,
+  graphSecret?: string,
+  devMode: boolean
+  /** ms to wait after a CMS save before re-fetching preview (Graph re-index lag). */
+  previewDelay: number
+}
+
+export const env: iEnv = {
   cmsUrl: read("OPTIMIZELY_CMS_URL"),
   graphGateway: read("OPTIMIZELY_GRAPH_GATEWAY") ?? "https://cg.optimizely.com",
   graphSingleKey: read("OPTIMIZELY_GRAPH_SINGLE_KEY"),
