@@ -21,10 +21,21 @@ export interface ColorStyle {
 
 /**
  * Background + matching text color from `sectionColor` / `backgroundColor`.
- * Tokens match the CMS display-template enum; values map to our theme vars.
+ *
+ * Two value vocabularies are accepted, both resolved entirely from theme vars —
+ * no colour values are baked in here:
+ *  - Semantic intents (`neutral`, `primary`, `base_100`, …): the switch, kept for
+ *    back-compat with content authored against the Visual Builder enum.
+ *  - Raw theme token roles (`ink`, `surface`, `muted`, `on-ink`, …): the generic
+ *    branch. The role backs the background; its paired `--t-on-<role>` (falling
+ *    back to `--t-on-surface`) is the foreground; and the theme's foreground text
+ *    roles are remapped to that within the section, so the shared text classes
+ *    (`.disp` / `.lead` / `.bdy` / `.eyebrow`) stay legible on any background
+ *    without a per-role lookup or a `dark` flag.
  */
 export function colorStyle(s: Settings): ColorStyle {
-  switch (s.backgroundColor || s.sectionColor || "") {
+  const value = s.backgroundColor || s.sectionColor || ""
+  switch (value) {
     case "neutral":
       return {
         style: "background:var(--t-ink); color:var(--t-on-ink);",
@@ -63,9 +74,17 @@ export function colorStyle(s: Settings): ColorStyle {
       }
     case "error":
       return { style: "background:#dc2626; color:#fff;", dark: true }
-    default:
-      return { style: "", dark: false }
   }
+  // Raw theme token role → background + paired foreground, all from theme vars.
+  if (/^[a-z][a-z0-9-]*$/.test(value)) {
+    const fg = `var(--t-on-${value}, var(--t-on-surface))`
+    return {
+      style: `background:var(--t-${value}); color:${fg};` +
+        ` --t-ink:${fg}; --t-muted:${fg}; --t-on-surface:${fg};`,
+      dark: false,
+    }
+  }
+  return { style: "", dark: false }
 }
 
 const px = (
