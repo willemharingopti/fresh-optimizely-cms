@@ -17,28 +17,63 @@ export interface BlockProps {
   articles: ArticleSummary[]
 }
 
+const richText = (v: unknown) => (typeof v === "string" ? { html: v } : v)
+const firstOf = (v: unknown) => (Array.isArray(v) ? v[0] : v)
+const asLinks = (v: unknown) =>
+  Array.isArray(v) ? v.map((x) => (typeof x === "string" ? { text: x, url: { default: "#" } } : x)) : v
+
+/**
+ * Bridge design-import (`axiom_`) content onto the canonical fields the base
+ * block components read. The importer flattens/renames some fields (rich text as
+ * a plain string, `Text.html` → `Text_html`, a single string emitted as an
+ * array, link labels without URLs), so realign them here. No-op for native
+ * content (only applied when an `axiom_` prefix was stripped).
+ */
+function normalizeAxiom(type: string, c: CmsComponent): CmsComponent {
+  const r = c as unknown as Record<string, unknown> // importer fields aren't on the typed shape
+  let patch: Record<string, unknown> = {}
+  switch (type) {
+    case "Paragraph":
+      patch = { Text: r.Text ?? r.Text_html }
+      break
+    case "Text":
+      patch = { Content: firstOf(r.Content) }
+      break
+    case "Collapse":
+      patch = { Body: richText(r.Body) }
+      break
+    case "Card":
+      patch = { Body: richText(r.Body), Links: asLinks(r.Links) }
+      break
+  }
+  return { ...c, ...patch } as CmsComponent
+}
+
 /** Standard rendering, dispatched on content type — unchanged default look.
  * `axiom_`-prefixed content types are design-specific variants of the base
  * blocks (e.g. `axiom_Hero`), so strip the prefix and dispatch to the same
  * renderer; plain base-type names are unaffected. */
 function StandardBlock({ c, index, dark, articles }: BlockProps) {
-  switch (c.__typename?.replace(/^axiom_/, "")) {
+  const type = c.__typename?.replace(/^axiom_/, "") ?? ""
+  // only design-import content (a prefix was stripped) needs field realignment
+  const cc = type === c.__typename ? c : normalizeAxiom(type, c)
+  switch (type) {
     case "Hero":
-      return <Hero c={c} />
+      return <Hero c={cc} />
     case "Card":
-      return <Card c={c} index={index} dark={dark} />
+      return <Card c={cc} index={index} dark={dark} />
     case "Collapse":
-      return <Collapse c={c} />
+      return <Collapse c={cc} />
     case "CallToAction":
-      return <CTA c={c} />
+      return <CTA c={cc} />
     case "Text":
-      return <Text c={c} dark={dark} />
+      return <Text c={cc} dark={dark} />
     case "Paragraph":
-      return <Paragraph c={c} dark={dark} />
+      return <Paragraph c={cc} dark={dark} />
     case "Image":
-      return <Image c={c} />
+      return <Image c={cc} />
     case "ArticleList":
-      return <ArticleList c={c} articles={articles} />
+      return <ArticleList c={cc} articles={articles} />
     default:
       return null
   }
