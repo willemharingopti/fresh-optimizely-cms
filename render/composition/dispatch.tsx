@@ -17,9 +17,12 @@ export interface BlockProps {
   articles: ArticleSummary[]
 }
 
-/** Standard rendering, dispatched on content type — unchanged default look. */
+/** Standard rendering, dispatched on content type — unchanged default look.
+ * `axiom_`-prefixed content types are design-specific variants of the base
+ * blocks (e.g. `axiom_Hero`), so strip the prefix and dispatch to the same
+ * renderer; plain base-type names are unaffected. */
 function StandardBlock({ c, index, dark, articles }: BlockProps) {
-  switch (c.__typename) {
+  switch (c.__typename?.replace(/^axiom_/, "")) {
     case "Hero":
       return <Hero c={c} />
     case "Card":
