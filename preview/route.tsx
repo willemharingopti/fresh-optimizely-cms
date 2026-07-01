@@ -143,7 +143,6 @@ function makePreview(Layout: PreviewLayout) {
           ? (
             <Composition
               sections={data.sections}
-              articles={data.articles}
               edit={data.edit}
             />
           )

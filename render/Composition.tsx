@@ -1,61 +1,60 @@
-import type { JSX } from "preact"
-import type { ArticleSummary, Section } from "../graph/experience.ts"
-import { columnStyle, rowStyle, sectionContainerStyle, sectionOuterStyle } from "./displaySettings.ts"
+import type { ComponentChildren, JSX } from "preact"
+import type { NodeStyle, Section } from "../graph/experience.ts"
+import { resolveStructure } from "./composition/componentRegistry.ts"
 import { Block } from "./composition/dispatch.tsx"
 
-// --- section + experience -------------------------------------------------
-function SectionView(
-  { section, articles, edit }: {
-    section: Section
-    articles: ArticleSummary[]
-    edit: boolean
-  },
-) {
-  // Section: full-bleed background + text color + vertical spacing (vSpacing);
-  // inner container width comes from gridWidth. Rows/columns lay out via flex
-  // from their own display settings (gap, justify, align, gridSpan, ...).
-  const { style, dark } = sectionOuterStyle(section.settings)
-  let cardIndex = 0
+/**
+ * Render a structure node (section / row / column) through its registered
+ * renderer, resolved by display-template key. The renderer owns the container
+ * markup + styling (parameterized by the node's display settings). An
+ * unresolved node renders its children bare so content still shows.
+ */
+function StructureNode(
+  { node, edit, children }: { node: NodeStyle; edit: boolean; children: ComponentChildren },
+): JSX.Element {
+  const Renderer = resolveStructure(node.displayTemplateKey)
+  if (!Renderer) return <>{children}</>
   return (
-    // In edit mode, tag the section and each component with their composition
-    // node keys so the Visual Builder editor can map DOM elements to nodes.
-    <section style={style} data-epi-block-id={edit ? section.key : undefined}>
-      <div style={sectionContainerStyle(section.settings)}>
-        {section.rows.map((row, ri) => (
-          <div key={ri} style={rowStyle(row.settings)}>
-            {row.columns.map((col, ci) => (
-              <div key={ci} style={columnStyle(col.settings)}>
-                {col.components.map((c, idx2) => {
-                  const idx = c.__typename === "Card" ? cardIndex++ : 0
-                  const block = <Block c={c} index={idx} dark={dark} articles={articles} />
-                  return edit
-                    ? (
-                      <div key={idx2} data-epi-block-id={c.__nodeKey}>
-                        {block}
-                      </div>
-                    )
-                    : <div key={idx2} style="display:contents;">{block}</div>
-                })}
-              </div>
-            ))}
-          </div>
-        ))}
-      </div>
-    </section>
+    <Renderer settings={node.settings} nodeKey={node.key} edit={edit}>
+      {children}
+    </Renderer>
+  )
+}
+
+function SectionView({ section, edit }: { section: Section; edit: boolean }): JSX.Element {
+  return (
+    <StructureNode node={section} edit={edit}>
+      {section.rows.map((row, ri) => (
+        <StructureNode key={ri} node={row} edit={edit}>
+          {row.columns.map((col, ci) => (
+            <StructureNode key={ci} node={col} edit={edit}>
+              {col.components.map((c, i) =>
+                edit
+                  ? (
+                    <div key={i} data-epi-block-id={c.__nodeKey}>
+                      <Block c={c} />
+                    </div>
+                  )
+                  : <Block key={i} c={c} />
+              )}
+            </StructureNode>
+          ))}
+        </StructureNode>
+      ))}
+    </StructureNode>
   )
 }
 
 export function Composition(
-  { sections, articles = [], edit = false }: {
+  { sections, edit = false }: {
     sections: Section[]
-    articles?: ArticleSummary[]
     /** Preview/edit mode: emit Visual Builder block ids for on-page editing. */
     edit?: boolean
   },
 ): JSX.Element {
   return (
     <>
-      {sections.map((s, i) => <SectionView key={i} section={s} articles={articles} edit={edit} />)}
+      {sections.map((s, i) => <SectionView key={i} section={s} edit={edit} />)}
     </>
   )
 }
